@@ -8,7 +8,7 @@ logger = Logger()
 client = AsyncOpenAI(api_key=OPENAI_API_KEY)
 
 
-async def execute_plan(user_prompt, agent=None, system_msg=None):
+async def execute_plan(user_prompt, verbose=False, agent=None, system_msg=None):
     toolset = agent_tools.get(agent, tool_registry)
     tool_list = "\n".join([f"{name}: {fn.__doc__.strip()}" for name, fn in toolset.items()])
     # ----------------------------------
@@ -37,7 +37,8 @@ async def execute_plan(user_prompt, agent=None, system_msg=None):
     )
 
     raw_plan = response.choices[0].message.content
-    print("\n[LLM PLAN]", raw_plan)
+    if verbose:
+        print("\n[LLM PLAN]", raw_plan)
     plan = json.loads(raw_plan)
 
     steps_log = []
